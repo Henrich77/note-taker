@@ -1,8 +1,12 @@
 const router = require("express").Router();
-const uuid = require("uuid");
+const { v4: uuidv4 } = require("uuid");
 const fs = require("fs");
 const db = require("../db/db.json");
-const { readFromFile, readAndAppend } = require("../db/helpers/fsUtils");
+const {
+  readFromFile,
+  readAndAppend,
+  writeToFile,
+} = require("../db/helpers/fsUtils");
 // GET Route for retrieving diagnostic information
 router.get("/notes", (req, res) => {
   console.info(`${req.method} request received for feedback`);
@@ -25,6 +29,7 @@ router.post("/notes", (req, res) => {
     const newNote = {
       title,
       text,
+      id: uuidv4(),
     };
 
     readAndAppend(newNote, "./db/db.json");
@@ -58,12 +63,22 @@ router.post("/notes", (req, res) => {
 
     console.log(response);
 
-    // TODO: Add a comment explaining the functionality of res.json()
     res.status(201).json(response);
   } else {
-    // TODO: Add a comment describing the purpose of the else statement in this POST request.
     res.status(500).json("Error in posting note");
   }
 });
+
+router.delete("/notes/:id", (req, res) =>
+  readFromFile("./db/db.json").then((data) => {
+    const parsedData = JSON.parse(data);
+    console.info(parsedData);
+    const filterNotes = parsedData.filter((notes) => notes.id != req.params.id);
+
+    writeToFile("./db/db.json", filterNotes);
+    console.info(filterNotes);
+    res.status(201).json("notes has to be deleted");
+  })
+);
 
 module.exports = router;
