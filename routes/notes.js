@@ -17,15 +17,15 @@ router.get("/notes", (req, res) => {
 // POST Route for a error logging
 router.post('/notes', (req, res) => {
     // Log that a POST request was received
-    console.info(`${req.method} request received to add a review`);
+    console.info(`${req.method} request received to add a note`);
   
     const { title, text } = req.body;
 
     if (title && text) {
       
       const newNote = {
-        title: noteTitle.value,
-        text: noteText.value,
+       title,
+       text,
       };
 
       fs.readFile('./db/db.json', 'utf8', (err, data) => {
@@ -45,7 +45,7 @@ router.post('/notes', (req, res) => {
             (writeErr) =>
               writeErr
                 ? console.error(writeErr)
-                : console.info('Successfully updated reviews!')
+                : console.info('Successfully updated notes!')
           );
         }
       });
@@ -63,7 +63,7 @@ router.post('/notes', (req, res) => {
       res.status(201).json(response);
     } else {
       // TODO: Add a comment describing the purpose of the else statement in this POST request.
-      res.status(500).json('Error in posting review');
+      res.status(500).json('Error in posting note');
     }
   });
 
