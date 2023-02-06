@@ -15,56 +15,55 @@ router.get("/notes", (req, res) => {
 });
 
 // POST Route for a error logging
-router.post('/notes', (req, res) => {
-    // Log that a POST request was received
-    console.info(`${req.method} request received to add a note`);
-  
-    const { title, text } = req.body;
+router.post("/notes", (req, res) => {
+  // Log that a POST request was received
+  console.info(`${req.method} request received to add a note`);
 
-    if (title && text) {
-      
-      const newNote = {
-       title,
-       text,
-      };
+  const { title, text } = req.body;
 
-      fs.readFile('./db/db.json', 'utf8', (err, data) => {
-        if (err) {
-          console.error(err);
-        } else {
-          // Convert string into JSON object
-          const parsedNotes = JSON.parse(data);
-  
-          // Add a new review
-          parsedNotes.push(newNote);
-  
-          // Write updated reviews back to the file
-          fs.writeFile(
-            './db/db.json',
-            JSON.stringify(parsedNotes, null, 4),
-            (writeErr) =>
-              writeErr
-                ? console.error(writeErr)
-                : console.info('Successfully updated notes!')
-          );
-        }
-      });
-  
-      const response = {
-        status: 'success',
-        body: newNote,
-      };
+  if (title && text) {
+    const newNote = {
+      title,
+      text,
+    };
 
+    readAndAppend(newNote, "./db/db.json");
 
-  
-      console.log(response);
-  
-      // TODO: Add a comment explaining the functionality of res.json()
-      res.status(201).json(response);
-    } else {
-      // TODO: Add a comment describing the purpose of the else statement in this POST request.
-      res.status(500).json('Error in posting note');
-    }
-  });
+    //   fs.readFile('./db/db.json', 'utf8', (err, data) => {
+    //     if (err) {
+    //       console.error(err);
+    //     } else {
+    //       // Convert string into JSON object
+    //       const parsedNotes = JSON.parse(data);
 
-  module.exports = router;
+    //       // Add a new review
+    //       parsedNotes.push(newNote);
+
+    //       // Write updated reviews back to the file
+    //       fs.writeFile(
+    //         './db/db.json',
+    //         JSON.stringify(parsedNotes, null, 4),
+    //         (writeErr) =>
+    //           writeErr
+    //             ? console.error(writeErr)
+    //             : console.info('Successfully updated notes!')
+    //       );
+    //     }
+    //   });
+
+    const response = {
+      status: "success",
+      body: newNote,
+    };
+
+    console.log(response);
+
+    // TODO: Add a comment explaining the functionality of res.json()
+    res.status(201).json(response);
+  } else {
+    // TODO: Add a comment describing the purpose of the else statement in this POST request.
+    res.status(500).json("Error in posting note");
+  }
+});
+
+module.exports = router;
